@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>博客-编辑博客</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link rel="stylesheet" type="text/css" href="/css/animate.css">
+		<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+		<link rel="stylesheet" type="text/css" href="/css/line-awesome.css">
+		<link rel="stylesheet" type="text/css" href="/css/line-awesome-font-awesome.min.css">
+		<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+		<link rel="stylesheet" type="text/css" href="/css/jquery.mCustomScrollbar.min.css">
+		<link rel="stylesheet" type="text/css" href="/lib/slick/slick.css">
+		<link rel="stylesheet" type="text/css" href="/lib/slick/slick-theme.css">
+		<link rel="stylesheet" type="text/css" href="/css/style.css">
+		<link rel="stylesheet" type="text/css" href="/css/responsive.css">
+		<link rel="stylesheet" type="text/css" href="/css/blogEditor.css"/><!-- 引入blogEditor.css -->
+		<script type="text/javascript">
+			window.onload = function () {
+
+
+			}
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<header>
+				<div class="container">
+					<div class="header-data">
+						<div class="logo pd-btm">
+							<a href="index.html" title=""><img src="images/logo.png" alt=""></a>
+						</div>
+						<!--logo end-->
+						<div class="forum-bar">
+							<h2>Forum</h2>
+							<ul>
+								<li><a href="#" title="">Tags</a></li>
+								<li><a href="#" title="">Users</a></li>
+								<li><a href="#" title="" class="ask-question">Ask a question</a></li>
+							</ul>
+						</div>
+						<!--search-bar end-->
+						<div class="login_register">
+							<ul>
+								<li><a href="sign-in.html" title="">Login</a></li>
+								<li><a href="sign-in.html" title="">Register</a></li>
+							</ul>
+						</div>
+						<!--login_register end-->
+						<div class="search-bar st2">
+							<form>
+								<input type="text" name="search" placeholder="Search...">
+								<button type="submit"><i class="la la-search"></i></button>
+							</form>
+						</div>
+						<!--search-bar end-->
+					</div>
+					<!--header-data end-->
+				</div>
+			</header>
+
+			<section class="forum-sec">
+				<div class="container">
+					<div class="forum-links">
+						<ul>
+							<li class="active"><a href="#" title="">Latest</a></li>
+							<li><a href="#" title="">Unanswered</a></li>
+							<li><a href="#" title="">Treading</a></li>
+							<li><a href="#" title="">Popular This Week</a></li>
+							<li><a href="#" title="">Popular of Month</a></li>
+						</ul>
+					</div>
+					<!--forum-links end-->
+					<div class="forum-links-btn">
+						<a href="#" title=""><i class="fa fa-bars"></i></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="forum-page">
+				<div class="container">
+					<div class="forum-questions-sec">
+						<div class="row">
+							<!-- left-box -->
+							<div class="col-lg-8">
+								<div class="cl-8-title">发布博客</div>
+								<div class="cl-8-content">
+									<div class="cl-8-c-line">
+										<label for="title">标题：</label>
+										<input type="text" name="title" id="title" placeholder="请输入标题" style="border-radius: 15px"/>
+									</div>
+									<div class="cl-8-c-line">
+										<label for="select">分类：</label>
+										<select id="select" style="border-radius: 15px">
+<!--											<option value="0">音乐</option>-->
+<!--											<option value="1">游戏</option>-->
+<!--											<option value="2">艺术</option>-->
+										</select>
+									</div>
+									<div class="cl-8-c-line">
+										<label for="text">内容：</label>
+										<div id="text"></div>
+									</div>
+									<div class="cl-8-c-line" style="margin-left: 450px">
+										<button type="button" id="btnSubmit" style="margin-right: 20px;border-radius:15px;">提交</button>
+										<button type="button" id="btnSave" style="background-color: white;color: #E44D3A;border: 1px solid #E44D3A;border-radius:15px;">暂存</button>
+									</div>
+								</div>
+							</div>
+							<!-- right-box -->
+							<div class="col-lg-4">
+								<div class="widget widget-feat">
+									<ul>
+										<li>
+											<i class="fa fa-heart"></i>
+											<span>1185</span>
+										</li>
+										<li>
+											<i class="fa fa-comment"></i>
+											<span>1165</span>
+										</li>
+										<li>
+											<i class="fa fa-share-alt"></i>
+											<span>1120</span>
+										</li>
+										<li>
+											<i class="fa fa-eye"></i>
+											<span>1009</span>
+										</li>
+									</ul>
+								</div>
+								<!--widget-feat end-->
+								<div class="widget widget-user">
+									<h3 class="title-wd">Top User of the Week</h3>
+									<ul>
+										<li>
+											<div class="usr-msg-details">
+												<div class="usr-ms-img">
+													<img src="http://via.placeholder.com/50x50" alt="">
+												</div>
+												<div class="usr-mg-info">
+													<h3>Jessica William</h3>
+													<p>Graphic Designer </p>
+												</div>
+												<!--usr-mg-info end-->
+											</div>
+											<span><img src="images/price1.png" alt="">1185</span>
+										</li>
+										<li>
+											<div class="usr-msg-details">
+												<div class="usr-ms-img">
+													<img src="http://via.placeholder.com/50x50" alt="">
+												</div>
+												<div class="usr-mg-info">
+													<h3>John Doe</h3>
+													<p>PHP Developer</p>
+												</div>
+												<!--usr-mg-info end-->
+											</div>
+											<span><img src="images/price2.png" alt="">1165</span>
+										</li>
+										<li>
+											<div class="usr-msg-details">
+												<div class="usr-ms-img">
+													<img src="http://via.placeholder.com/50x50" alt="">
+												</div>
+												<div class="usr-mg-info">
+													<h3>Poonam</h3>
+													<p>Wordpress Developer </p>
+												</div>
+												<!--usr-mg-info end-->
+											</div>
+											<span><img src="images/price3.png" alt="">1120</span>
+										</li>
+										<li>
+											<div class="usr-msg-details">
+												<div class="usr-ms-img">
+													<img src="http://via.placeholder.com/50x50" alt="">
+												</div>
+												<div class="usr-mg-info">
+													<h3>Bill Gates</h3>
+													<p>C & C++ Developer </p>
+												</div>
+												<!--usr-mg-info end-->
+											</div>
+											<span><img src="images/price4.png" alt="">1009</span>
+										</li>
+									</ul>
+								</div>
+								<!--widget-user end-->
+								<div class="widget widget-adver">
+									<img src="http://via.placeholder.com/370x270" alt="">
+								</div>
+								<!--widget-adver end-->
+							</div>
+						</div>
+					</div>
+					<!--forum-questions-sec end-->
+				</div>
+			</section>
+			<!--forum-page end-->
+
+			<footer>
+				<div class="footy-sec mn no-margin">
+					<div class="container">
+						<ul>
+							<li><a href="#" title="">Help Center</a></li>
+							<li><a href="#" title="">Privacy Policy</a></li>
+							<li><a href="#" title="">Community Guidelines</a></li>
+							<li><a href="#" title="">Cookies Policy</a></li>
+							<li><a href="#" title="">Career</a></li>
+							<li><a href="#" title="">Forum</a></li>
+							<li><a href="#" title="">Language</a></li>
+							<li><a href="#" title="">Copyright Policy</a></li>
+						</ul>
+						<p><img src="images/copy-icon2.png" alt="">Copyright 2018</p>
+						<img class="fl-rgt" src="images/logo2.png" alt="">
+					</div>
+				</div>
+			</footer>
+
+			<div class="overview-box" id="question-box">
+				<div class="overview-edit">
+					<h3>Ask a Question</h3>
+					<form>
+						<input type="text" name="question" placeholder="Type Question Here">
+						<input type="text" name="tags" placeholder="Tags">
+						<textarea placeholder="Description"></textarea>
+						<button type="submit" class="save">Submit</button>
+						<button type="submit" class="cancel">Cancel</button>
+					</form>
+					<a href="#" title="" class="close-box"><i class="la la-close"></i></a>
+				</div>
+				<!--overview-edit end-->
+			</div>
+			<!--overview-box end-->
+		</div>
+		<!--theme-layout end-->
+
+		<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="js/popper.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/jquery.mCustomScrollbar.js"></script>
+		<script type="text/javascript" src="lib/slick/slick.min.js"></script>
+		<script type="text/javascript" src="js/script.js"></script>
+		<script src="js/wangEditor.min.js" type="text/javascript" charset="utf-8"></script><!-- 引入wangEditor.min.js -->
+		<script src="js/blogEditor.js" type="text/javascript" charset="utf-8"></script><!-- 引入blogEditor.js -->
+		
+	</body>
+</html>

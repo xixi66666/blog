@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>博客-好友请求</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="stylesheet" type="text/css" href="css/animate.css">
+<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+<link rel="stylesheet" type="text/css" href="css/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="css/line-awesome.css">
+<link rel="stylesheet" type="text/css" href="css/line-awesome-font-awesome.min.css">
+<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+<link rel="stylesheet" type="text/css" href="lib/slick/slick.css">
+<link rel="stylesheet" type="text/css" href="lib/slick/slick-theme.css">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/responsive.css">
+
+	<script type="text/javascript">
+		window.onload = function () {
+			document.getElementById("current_UID").innerText = localStorage.getItem("userID");
+
+			$.ajax({
+				url:'/getRequest',
+				type: "get",
+				data:{
+					user_id: document.getElementById("current_UID").innerText,
+				},
+				dataType: "JSON",
+				success: function (allrequest) {
+					for(var i in allrequest){
+						$.ajax({
+							url:'/startUserSearch',
+							type: "get",
+							data:{
+								User_id: allrequest[i].sponsor_id,
+							},
+							dataType: "JSON",
+							success: function (result) {
+								var friendTable = document.getElementById("friendList");
+								var div1 = document.createElement('div');
+								div1.className = "col-lg-3 col-md-4 col-sm-6 col-12";
+								friendTable.appendChild(div1);
+								div1.innerHTML =
+										'\t\t\t\t\t\t\t<div class="company_profile_info">\n' +
+										'\t\t\t\t\t\t\t\t<div class="company-up-info">\n' +
+										'\t\t\t\t\t\t\t\t\t<img src="images/resources/pf-icon1.png" alt="">\n' +
+										'\t\t\t\t\t\t\t\t\t<h3>' + result.user_name + '</h3>\n' +
+										'\t\t\t\t\t\t\t\t\t<h4>' + result.user_ID + '</h4>\n' +
+										'\t\t\t\t\t\t\t\t\t<ul>\n' +
+										'\t\t\t\t\t\t\t\t\t\t<li><a href="#" title="" class="talk" id="'+ result.user_ID +'" onclick="acceptRequest('+document.getElementById("current_UID").innerText+')">接受</a></li>\n' +
+										'\t\t\t\t\t\t\t\t\t\t<li><a href="#" title="" class="deletefriend" id="'+ result.user_ID +'" onclick="rejectRequest('+document.getElementById("current_UID").innerText+')">拒绝</a></li>\n' +
+										'\t\t\t\t\t\t\t\t\t</ul>\n' +
+										'\t\t\t\t\t\t\t\t</div>\n' +
+										'\t\t\t\t\t\t\t\t<a href="#" title="" class="view-more-pro">进入主页</a>\n' +
+										'\t\t\t\t\t\t\t</div>\n';
+							}
+						})
+					}
+				}
+			})
+		}
+	</script>
+	<script type="text/javascript">
+		function ttt() {
+			window.open('./searchResult?'+'UID='+document.getElementById('id_input').value);
+		}
+	</script>
+
+
+</head>
+
+
+<body>
+	
+
+	<div class="wrapper">
+
+
+
+		<header>
+			<div class="container">
+				<div class="header-data">
+					<div class="logo">
+						<a href="index" title=""><img src="images/logo.png" alt=""></a>
+					</div><!--logo end-->
+					<div class="search-bar">
+						<form>
+							<input type="text" name="search" placeholder="输入搜索内容...">
+							<button type="submit"><i class="la la-search"></i></button>
+						</form>
+					</div><!--search-bar end-->
+					<nav>
+						<ul>
+							<li>
+								<a href="/" title="">
+									<span><img src="images/icon1.png" alt=""></span>
+									主页
+								</a>
+							</li>
+							<li>
+								<a href="/friendList" title="">
+									<span><img src="images/icon4.png" alt=""></span>
+									好友
+								</a>
+								<ul>
+									<li><a href="user-profile.html" title="">User Profile</a></li>
+									<li><a href="my-profile-feed.html" title="">my-profile-feed</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#" title="" class="not-box-open">
+									<span><img src="images/icon6.png" alt=""></span>
+									留言
+								</a>
+								<div class="notification-box msg">
+									<div class="nt-title">
+										<h4>Setting</h4>
+										<a href="#" title="">Clear all</a>
+									</div>
+									<div class="nott-list">
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img1.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="messages.html" title="">Jassica William</a> </h3>
+												<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do.</p>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img2.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="messages.html" title="">Jassica William</a></h3>
+												<p>Lorem ipsum dolor sit amet.</p>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img3.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="messages.html" title="">Jassica William</a></h3>
+												<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempo incididunt ut labore et dolore magna aliqua.</p>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="view-all-nots">
+											<a href="messages.html" title="">View All Messsages</a>
+										</div>
+									</div><!--nott-list end-->
+								</div><!--notification-box end-->
+							</li>
+							<li>
+								<a href="#" title="" class="not-box-open">
+									<span><img src="images/icon7.png" alt=""></span>
+									通知
+								</a>
+								<div class="notification-box">
+									<div class="nt-title">
+										<h4>Setting</h4>
+										<a href="#" title="">Clear all</a>
+									</div>
+									<div class="nott-list">
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img1.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img2.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img3.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="notfication-details">
+											<div class="noty-user-img">
+												<img src="images/resources/ny-img2.png" alt="">
+											</div>
+											<div class="notification-info">
+												<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+												<span>2 min ago</span>
+											</div><!--notification-info -->
+										</div>
+										<div class="view-all-nots">
+											<a href="#" title="">View All Notification</a>
+										</div>
+									</div><!--nott-list end-->
+								</div><!--notification-box end-->
+							</li>
+						</ul>
+					</nav><!--nav end-->
+					<div class="menu-btn">
+						<a href="#" title=""><i class="fa fa-bars"></i></a>
+					</div><!--menu-btn end-->
+					<div class="user-account">
+						<div class="user-info">
+							<img src="images/resources/user.png" alt="">
+							<a href="#" title="" id="top_UID">123</a>
+							<i class="la la-sort-down"></i>
+						</div>
+						<div class="user-account-settingss">
+							<h3>当前状态</h3>
+							<ul class="on-off-status">
+								<li>
+									<div class="fgt-sec">
+										<input type="radio" name="cc" id="c5">
+										<label for="c5">
+											<span></span>
+										</label>
+										<small>在线</small>
+									</div>
+								</li>
+								<li>
+									<div class="fgt-sec">
+										<input type="radio" name="cc" id="c6">
+										<label for="c6">
+											<span></span>
+										</label>
+										<small>离线</small>
+									</div>
+								</li>
+							</ul>
+							<h3>设置</h3>
+							<ul class="us-links">
+								<li><a href="profile-account-setting.html" title="">用户信息设置</a></li>
+								<li><a href="#" title="">问题与反馈</a></li>
+							</ul>
+							<h3 class="tc"><a href="javascript:void(0)" onclick="window.location.href = './signIn';localStorage.removeItem('userID');" title="">退出登录</a></h3>
+						</div><!--user-account-settingss end-->
+					</div>
+				</div><!--header-data end-->
+			</div>
+		</header><!--header end-->
+
+
+		<section class="companies-info">
+			<div class="container">
+				<div class="company-title">
+					<h3>全部好友请求</h3>
+				</div><!--company-title end-->
+				<div class="companies-list" >
+					<div class="row" id = "friendList">
+<!--						<div class="col-lg-3 col-md-4 col-sm-6 col-12">-->
+<!--							<div class="company_profile_info">-->
+<!--								<div class="company-up-info">-->
+<!--									<img src="images/resources/pf-icon1.png" alt="">-->
+<!--									<h3>GOD</h3>-->
+<!--									<h4>111110</h4>-->
+<!--									<ul>-->
+<!--										<li><a href="#" title="" class="talk">发起聊天</a></li>-->
+<!--										<li><a href="#" title="" class="deletefriend">删除好友</a></li>-->
+<!--									</ul>-->
+<!--								</div>-->
+<!--								<a href="#" title="" class="view-more-pro">进入主页</a>-->
+<!--							</div>&lt;!&ndash;company_profile_info end&ndash;&gt;-->
+<!--						</div>-->
+					</div>
+				</div><!--companies-list end-->
+				<div class="process-comm">
+					<a href="#" title=""><img src="images/process-icon.png" alt=""></a>
+				</div>
+			</div>
+		</section><!--companies-info end-->
+
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+	</div><!--theme-layout end-->
+
+
+
+	<!--	接受请求-->
+	<script>
+		function acceptRequest(user_id) {
+			var friend_id=window.event.srcElement.id;
+			$.ajax({
+				async: false,
+				url:'/newFriendShip',
+				type:"post",
+				data:{
+					user_id:user_id,
+					friend_id:friend_id,
+				},
+				dataType:"text",
+				success: function (result) {
+					alert(result);
+				}
+			})
+			window.location.reload();
+		}
+	</script>
+	<!--	拒绝请求-->
+	<script>
+		function rejectRequest(user_id) {
+			var sponsor_id=window.event.srcElement.id;
+			$.ajax({
+				async:false,
+				url:'/deleteRequest',
+				type:'delete',
+				data:{
+					reciver:user_id,
+					sponsor:sponsor_id,
+				},
+				dataType: "text",
+				success:function (result) {
+					alert("已拒绝"+sponsor_id+"的好友请求");
+				}
+			})
+			window.location.reload();
+		}
+	</script>
+
+<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="js/popper.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/flatpickr.min.js"></script>
+<script type="text/javascript" src="lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

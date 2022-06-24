@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>博客-登录/注册</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link rel="stylesheet" type="text/css" href="css/animate.css">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/line-awesome.css">
+		<link rel="stylesheet" type="text/css" href="css/line-awesome-font-awesome.min.css">
+		<link rel="stylesheet" href="css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="lib/slick/slick.css">
+		<link rel="stylesheet" type="text/css" href="lib/slick/slick-theme.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="stylesheet" type="text/css" href="css/responsive.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+		<script type="text/javascript">
+			let wait = 60;
+
+			function f() {
+				var email = document.getElementById("email").value;
+				var password = document.getElementById("password").value;
+				var phone = document.getElementById("phone").value;
+				var User_name = document.getElementById("User_name").value;
+				var repeat_password = document.getElementById("repeat_password").value;
+				var code = document.getElementById("code").value;
+				if (User_name == "" || password == "" || repeat_password == "" || phone == "" || code == "" || email == "") {
+					alert("存在空信息！请完成注册信息填写！");
+					return;
+				}
+				if (password != repeat_password) {
+					alert("两次密码填写不一致，请重试！");
+					return ;
+				}
+				$.ajax({
+					url: "/registerAccount",
+					type: "POST",
+					data: {
+						"User_name": User_name,
+						"password": md5(password),
+						"repeat_password": md5(repeat_password),
+						"phone": phone,
+						"code": code,
+						"email": email
+					},
+					dataType: "text",
+					success: function(result) {
+						if (result == -1) {
+							alert("手机验证码验证错误，请重试！");
+						} else {
+							localStorage.setItem("userID", result);
+							window.location.href = "/";
+						}
+					}
+				})
+			}
+
+			function f1() {
+				var User_name = document.getElementById("User_name1").value;
+				var password = document.getElementById("password1").value;
+				$.ajax({
+					async: false,
+					url: "/userLogin",
+					type: "POST",
+					data: {
+						"User_name": User_name,
+						"password": md5(password),
+					},
+					dataType: "text",
+					success: function(result) {
+						if (result !== null && result !== "") {
+							localStorage.setItem("userID", parseInt(result));
+							window.location.href = "/";
+							alert("登陆成功，即将为您跳转至博客首页")
+						} else {
+							alert("输入的用户名或者密码有错误");
+						}
+					}
+				})
+			}
+
+			function getCode() {
+				let phone = document.getElementById("phone").value;
+				if (phone.length != 11) {
+					alert("手机号码格式错误，请重试！");
+					return;
+				}
+				$.ajax({
+					url: "/sendCode",
+					type: "POST",
+					data: {
+						"phone": phone
+					},
+					success: function(result) {
+						if (result) {
+							timer();
+						} else {
+							alert("验证码获取失败，请稍后重试！");
+						}
+					}
+				})
+			}
+
+			function timer() {
+				let button = document.getElementById("getCodeBtn")
+				if (wait == 0) {
+					button.innerText = "发送验证码";
+					button.disabled = false;
+					wait = 60;
+				} else {
+					button.disabled = true;
+					button.innerText = wait + "秒后重发";
+					wait--;
+					setTimeout(function() {
+						timer()
+					}, 1000);
+				}
+			}
+
+			function showFindPasswordBack() {
+				let tab = document.getElementById("back");
+				tab.firstChild.style.display = "block";
+				var clickEvent=document.createEvent('MouseEvent');
+				clickEvent.initMouseEvent('click',false,false,window,0,0,0,0,0,false,false,false,false,0,null);
+				tab.dispatchEvent(clickEvent);
+			}
+
+			function getCodeBack() {
+				let phone = document.getElementById("phoneback").value;
+
+				if (phone.length != 11) {
+					alert("手机号码格式错误，请重试！");
+					return;
+				}
+				$.ajax({
+					url: "/sendCode",
+					type: "POST",
+					data: {
+						"phone": phone
+					},
+					success: function(result) {
+						if (result) {
+							timerBack();
+						} else {
+							alert("验证码获取失败，请稍后重试！");
+						}
+					}
+				})
+			}
+
+			function timerBack() {
+				let button = document.getElementById("getCodeBtnback")
+				if (wait == 0) {
+					button.innerText = "发送验证码";
+					button.disabled = false;
+					wait = 60;
+				} else {
+					button.disabled = true;
+					button.innerText = wait + "秒后重发";
+					wait--;
+					setTimeout(function() {
+						timerBack()
+					}, 1000);
+				}
+			}
+			
+			function resetPassword() {
+				if (document.getElementById("phoneback").value == "" ||
+				document.getElementById("codeback").value == "" ||
+				document.getElementById("passwordback").value == "" ||
+				document.getElementById("repeat_passwordback").value == "") {
+					alert("存在空信息！请完成信息填写！");
+					return ;
+				}
+				if (document.getElementById("passwordback").value != document.getElementById("repeat_passwordback").value) {
+					alert("密码填写不一致，请重试！");
+					return ;
+				}
+				$.ajax({
+					url: "/resetPassword",
+					type: "POST",
+					data: {
+						"password": md5(document.getElementById("passwordback").value),
+						"phone": document.getElementById("phoneback").value,
+						"code": document.getElementById("codeback").value
+					},
+					success: function (result) {
+						if (result == -1)
+							alert("手机验证码验证错误，请重试！");
+						else {
+							alert("密码重置成功，请牢记！");
+							window.location.href = "./signIn";
+						}
+					}
+				})
+			}
+		</script>
+	</head>
+
+	<body class="sign-in">
+
+		<div class="wrapper">
+			<div class="sign-in-page">
+				<div class="signin-popup">
+					<div class="signin-pop">
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="cmp-info">
+									<div class="cm-logo">
+										<img src="images/cm-logo.png" alt="">
+										<p>欢迎来到登录/注册页面</p>
+									</div>
+									<!--cm-logo end-->
+									<img src="images/cm-main-img.png" alt="">
+								</div>
+								<!--cmp-info end-->
+							</div>
+							<div class="col-lg-6">
+								<div class="login-sec">
+									<ul class="sign-control">
+										<li data-tab="tab-1" class="current"><a href="#" title="">用户登录</a></li>
+										<li data-tab="tab-2"><a href="#" title="">用户注册</a></li>
+										<li data-tab="tab-4" id="back"><a href="#" title="" style="display: none" >找回密码</a></li>
+									</ul>
+									<div class="sign_in_sec current" id="tab-1">
+										<h3>Sign in</h3>
+										<form action="userLogin" method="post">
+											<div class="row">
+												<!--										<label style="color:red" th:text="${msg}"></label>-->
+												<div class="col-lg-12 no-pdd">
+													<div class="sn-field">
+														<input id="User_name1" name="User_name" placeholder="用户名">
+														<i class="la la-user"></i>
+													</div>
+													<!--sn-field end-->
+												</div>
+												<div class="col-lg-12 no-pdd">
+													<div class="sn-field">
+														<input id="password1" name="password" placeholder="密码" type="password">
+														<i class="la la-lock"></i>
+													</div>
+												</div>
+												<div class="col-lg-12 no-pdd">
+													<div class="checky-sec">
+														<div class="fgt-sec">
+															<input type="checkbox" name="cc" id="c1">
+															<label for="c1">
+																<span></span>
+															</label>
+															<small>记住我</small>
+														</div>
+														<!--fgt-sec end-->
+														<a href="javascript:void(0)" onclick="showFindPasswordBack()">忘记密码?</a>
+													</div>
+												</div>
+												<div class="col-lg-12 no-pdd">
+													<button type="button" onclick="f1()">登录</button>
+												</div>
+											</div>
+										</form>
+									</div>
+									<!--sign_in_sec end-->
+									<div class="sign_in_sec" id="tab-2">
+										<h3>Sign Up</h3>
+										<div class="dff-tab current" id="tab-3">
+											<form>
+												<div class="row">
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<div>
+																<label style="margin-bottom: 10px">用户名</label>
+																<input id="User_name" name="User_name"
+																	placeholder="Username">
+															</div>
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">密码</label>
+															<input type="password" id="password" name="Password"
+																placeholder="Password">
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">再次输入密码</label>
+															<input type="password" id="repeat_password"
+																name="Repeat Password" placeholder="Repeat Password">
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">手机号码</label>
+															<input id="phone" name="phone" placeholder="Phone"><button
+																id="getCodeBtn" type="button"
+																onclick="getCode()" style="margin-left: 135px">发送验证码</button>
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">验证码</label>
+															<input id="code" name="phone" placeholder="Verify Code">
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">电子邮箱</label>
+															<input id="email" name="Email" placeholder="Email">
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<button style="margin-left: 180px" type="button" onclick="f()">注册</button>
+													</div>
+												</div>
+											</form>
+										</div>
+										<!--dff-tab end-->
+									</div>
+									<div class="sign_in_sec" id="tab-4">
+										<h3>Find back</h3>
+										<div class="dff-tab current" id="tab-5">
+											<form>
+												<div class="row">
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">手机号码</label>
+															<input id="phoneback" name="phone" placeholder="Phone"><button
+																id="getCodeBtnback" type="button"
+																onclick="getCodeBack()" style="margin-left: 135px">发送验证码</button>
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">验证码</label>
+															<input id="codeback" name="phone" placeholder="Verify Code">
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">新密码</label>
+															<input type="password" id="passwordback" name="Password"
+																   placeholder="Password">
+															<i class=""></i>
+														</div>
+													</div>
+													<div class="col-lg-12 no-pdd">
+														<div class="sn-field">
+															<label style="margin-bottom: 10px">再次输入密码</label>
+															<input type="password" id="repeat_passwordback"
+																   name="Repeat Password" placeholder="Repeat Password">
+															<i class=""></i>
+														</div>
+													</div>
+
+
+													<div class="col-lg-12 no-pdd">
+														<button style="margin-left: 150px" type="button" onclick="resetPassword()">重置密码</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+
+								</div>
+								<!--login-sec end-->
+							</div>
+						</div>
+					</div>
+					<!--signin-pop end-->
+				</div>
+				<!--signin-popup end-->
+				<div class="footy-sec">
+					<div class="container">
+						<ul>
+							<li><a href="#" title="">Help Center</a></li>
+							<li><a href="#" title="">Privacy Policy</a></li>
+							<li><a href="#" title="">Community Guidelines</a></li>
+							<li><a href="#" title="">Cookies Policy</a></li>
+							<li><a href="#" title="">Career</a></li>
+							<li><a href="#" title="">Forum</a></li>
+							<li><a href="#" title="">Language</a></li>
+							<li><a href="#" title="">Copyright Policy</a></li>
+						</ul>
+						<p><img src="images/copy-icon.png" alt="">Copyright 2018</p>
+					</div>
+				</div>
+				<!--footy-sec end-->
+			</div>
+			<!--sign-in-page end-->
+		</div>
+		<!--theme-layout end-->
+		<script type="text/javascript" src="js/popper.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="lib/slick/slick.min.js"></script>
+		<script type="text/javascript" src="js/script.js"></script>
+	</body>
+</html>

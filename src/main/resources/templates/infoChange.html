@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>WorkWise Html Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <link rel="stylesheet" type="text/css" href="/css/animate.css">
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+    <link rel="stylesheet" type="text/css" href="/css/line-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/css/line-awesome-font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+    <link rel="stylesheet" type="text/css" href="/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" type="text/css" href="/lib/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="/lib/slick/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.0.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.1.min.js"></script>
+    <script type="text/javascript">
+
+        function set() {
+            $.ajax({
+                url: "/startUserSearch",
+                data: {
+                    User_id: localStorage.getItem("userID")
+                },
+                success: function (result) {
+                    document.getElementById("User_name").placeholder = result.user_name;
+                    document.getElementById("sex").placeholder = result.sex == 1 ? "男" : "女";
+                    document.getElementById("firstname").placeholder = result.firstname;
+                    document.getElementById("lastname").placeholder = result.lastname;
+                    document.getElementById("email").placeholder = result.email;
+                    document.getElementById("birthday").placeholder = result.birthday;
+                }
+            })
+        }
+
+        function f() {
+            var User_name = document.getElementById("User_name").value;
+            var sex = document.getElementById("sex").value;
+            var firstname = document.getElementById("firstname").value;
+            var lastname = document.getElementById("lastname").value;
+            var email = document.getElementById("email").value;
+            //var birthday = document.getElementById("birthday").value;
+            $.ajax({
+                url: "/editingIn",
+                type: "POST",
+                data: {
+                    "User_ID": localStorage.getItem("userID"),
+                    "User_name": User_name,
+                    "sex": sex,
+                    "firstname": firstname,
+                    "lastname": lastname,
+                    "email": email,
+                    //"birthday": birthday
+                }
+            })
+        }
+
+        function cancel() {
+            document.getElementById("User_name").value = "";
+            document.getElementById("sex").value = "";
+            document.getElementById("firstname").value = "";
+            document.getElementById("lastname").value = "";
+            document.getElementById("email").value = "";
+            //document.getElementById("birthday").value = "";
+        }
+    </script>
+    </head>
+</head>
+
+
+<body>
+
+
+<div class="wrapper">
+
+
+    <header>
+        <div class="container">
+            <div class="header-data">
+                <div class="logo">
+                    <a href="index" title=""><img src="images/logo.png" alt=""></a>
+                </div><!--logo end-->
+                <div class="search-bar">
+                    <form>
+                        <input type="text" name="search" placeholder="输入搜索内容...">
+                        <button type="submit"><i class="la la-search"></i></button>
+                    </form>
+                </div><!--search-bar end-->
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="/" title="">
+                                <span><img src="images/icon1.png" alt=""></span>
+                                主页
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/friendList" title="">
+                                <span><img src="images/icon4.png" alt=""></span>
+                                好友
+                            </a>
+                            <ul>
+                                <li><a href="user-profile.html" title="">User Profile</a></li>
+                                <li><a href="my-profile-feed.html" title="">my-profile-feed</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" title="" class="not-box-open">
+                                <span><img src="images/icon6.png" alt=""></span>
+                                留言
+                            </a>
+                            <div class="notification-box msg">
+                                <div class="nt-title">
+                                    <h4>Setting</h4>
+                                    <a href="#" title="">Clear all</a>
+                                </div>
+                                <div class="nott-list">
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img1.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="messages.html" title="">Jassica William</a> </h3>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do.</p>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img2.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="messages.html" title="">Jassica William</a></h3>
+                                            <p>Lorem ipsum dolor sit amet.</p>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img3.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="messages.html" title="">Jassica William</a></h3>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempo incididunt ut labore et dolore magna aliqua.</p>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="view-all-nots">
+                                        <a href="messages.html" title="">View All Messsages</a>
+                                    </div>
+                                </div><!--nott-list end-->
+                            </div><!--notification-box end-->
+                        </li>
+                        <li>
+                            <a href="#" title="" class="not-box-open">
+                                <span><img src="images/icon7.png" alt=""></span>
+                                通知
+                            </a>
+                            <div class="notification-box">
+                                <div class="nt-title">
+                                    <h4>Setting</h4>
+                                    <a href="#" title="">Clear all</a>
+                                </div>
+                                <div class="nott-list">
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img1.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img2.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img3.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="notfication-details">
+                                        <div class="noty-user-img">
+                                            <img src="images/resources/ny-img2.png" alt="">
+                                        </div>
+                                        <div class="notification-info">
+                                            <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                            <span>2 min ago</span>
+                                        </div><!--notification-info -->
+                                    </div>
+                                    <div class="view-all-nots">
+                                        <a href="#" title="">View All Notification</a>
+                                    </div>
+                                </div><!--nott-list end-->
+                            </div><!--notification-box end-->
+                        </li>
+                    </ul>
+                </nav><!--nav end-->
+                <div class="menu-btn">
+                    <a href="#" title=""><i class="fa fa-bars"></i></a>
+                </div><!--menu-btn end-->
+                <div class="user-account">
+                    <div class="user-info">
+                        <img src="images/resources/user.png" alt="">
+                        <a href="#" title="" id="top_UID">123</a>
+                        <i class="la la-sort-down"></i>
+                    </div>
+                    <div class="user-account-settingss">
+                        <h3>当前状态</h3>
+                        <ul class="on-off-status">
+                            <li>
+                                <div class="fgt-sec">
+                                    <input type="radio" name="cc" id="c5">
+                                    <label for="c5">
+                                        <span></span>
+                                    </label>
+                                    <small>在线</small>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="fgt-sec">
+                                    <input type="radio" name="cc" id="c6">
+                                    <label for="c6">
+                                        <span></span>
+                                    </label>
+                                    <small>离线</small>
+                                </div>
+                            </li>
+                        </ul>
+                        <h3>设置</h3>
+                        <ul class="us-links">
+                            <li><a href="profile-account-setting.html" title="">用户信息设置</a></li>
+                            <li><a href="#" title="">问题与反馈</a></li>
+                        </ul>
+                        <h3 class="tc"><a href="javascript:void(0)" onclick="window.location.href = './signIn';localStorage.removeItem('userID');" title="">退出登录</a></h3>
+                    </div><!--user-account-settingss end-->
+                </div>
+            </div><!--header-data end-->
+        </div>
+    </header><!--header end-->
+
+
+    <section class="profile-account-setting">
+        <div class="container">
+            <div class="account-tabs-setting">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="acc-leftbar">
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-acc-tab" data-toggle="tab" href="#nav-acc"
+                                   role="tab" aria-controls="nav-acc" aria-selected="true"><i class="la la-cogs"></i>账户设置</a>
+                                <a class="nav-item nav-link" id="nav-deactivate-tab" data-toggle="tab"
+                                   href="#nav-deactivate" role="tab" aria-controls="nav-deactivate"
+                                   aria-selected="false" onclick=set()><i class="fa fa-random"></i>信息修改</a>
+                                <a class="nav-item nav-link" id="nav-password-tab" data-toggle="tab"
+                                   href="#nav-password" role="tab" aria-controls="nav-password" aria-selected="false"><i
+                                        class="fa fa-lock"></i>修改密码</a>
+                                <a class="nav-item nav-link" id="nav-findpassword-tab" data-toggle="tab"
+                                   href="#nav-password" role="tab" aria-controls="nav-password" aria-selected="false"><i
+                                        class="fa fa-lock"></i>找回密码</a>
+                                <a class="nav-item nav-link" id="nav-status-tab" data-toggle="tab" href="#nav-status"
+                                   role="tab" aria-controls="nav-status" aria-selected="false"><i
+                                        class="fa fa-line-chart"></i>状态设置</a>
+                                <a class="nav-item nav-link" id="nav-notification-tab" data-toggle="tab"
+                                   href="#nav-notification" role="tab" aria-controls="nav-notification"
+                                   aria-selected="false"><i class="fa fa-flash"></i>通知设置</a>
+                                <a class="nav-item nav-link" id="nav-requests-tab" data-toggle="tab"
+                                   href="#nav-requests" role="tab" aria-controls="nav-requests" aria-selected="false"><i
+                                        class="fa fa-group"></i>请求列表</a>
+                                <a class="nav-item nav-link" id="security-login" data-toggle="tab"
+                                   href="#security-login" role="tab" aria-controls="security-login"
+                                   aria-selected="false"><i class="fa fa-user-secret"></i>安全设置</a>
+                                <a class="nav-item nav-link" id="privacy" data-toggle="tab" href="#privacy" role="tab"
+                                   aria-controls="privacy" aria-selected="false"><i class="fa fa-paw"></i>隐私政策</a>
+                            </div>
+                        </div><!--acc-leftbar end-->
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-acc" role="tabpanel"
+                                 aria-labelledby="nav-acc-tab">
+                                <div class="acc-setting">
+                                    <h3>Account Setting</h3>
+                                    <form>
+                                        <div class="notbar">
+                                            <h4>Notification Sound</h4>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pretium
+                                                nulla quis erat dapibus, varius hendrerit neque suscipit. Integer in ex
+                                                euismod, posuere lectus id</p>
+                                            <div class="toggle-btn">
+                                                <a href="#" title=""><img src="/images/up-btn.png" alt=""></a>
+                                            </div>
+                                        </div><!--notbar end-->
+                                        <div class="notbar">
+                                            <h4>Notification Email</h4>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pretium
+                                                nulla quis erat dapibus, varius hendrerit neque suscipit. Integer in ex
+                                                euismod, posuere lectus id</p>
+                                            <div class="toggle-btn">
+                                                <a href="#" title=""><img src="/images/up-btn.png" alt=""></a>
+                                            </div>
+                                        </div><!--notbar end-->
+                                        <div class="notbar">
+                                            <h4>Chat Message Sound</h4>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pretium
+                                                nulla quis erat dapibus, varius hendrerit neque suscipit. Integer in ex
+                                                euismod, posuere lectus id</p>
+                                            <div class="toggle-btn">
+                                                <a href="#" title=""><img src="/images/up-btn.png" alt=""></a>
+                                            </div>
+                                        </div><!--notbar end-->
+                                        <div class="save-stngs">
+                                            <ul>
+                                                <li>
+                                                    <button type="submit">Save Setting</button>
+                                                </li>
+                                                <li>
+                                                    <button type="submit">Restore Setting</button>
+                                                </li>
+                                            </ul>
+                                        </div><!--save-stngs end-->
+                                    </form>
+                                </div><!--acc-setting end-->
+                            </div>
+                            <div class="tab-pane fade" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
+                                <div class="acc-setting">
+                                    <h3>Profile Status</h3>
+                                    <div class="profile-bx-details">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                                <div class="profile-bx-info">
+                                                    <div class="pro-bx">
+                                                        <img src="/images/pro-icon1.png" alt="">
+                                                        <div class="bx-info">
+                                                            <h3>$5,145</h3>
+                                                            <h5>Total Income</h5>
+                                                        </div><!--bx-info end-->
+                                                    </div><!--pro-bx end-->
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+                                                </div><!--profile-bx-info end-->
+                                            </div>
+                                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                                <div class="profile-bx-info">
+                                                    <div class="pro-bx">
+                                                        <img src="/images/pro-icon2.png" alt="">
+                                                        <div class="bx-info">
+                                                            <h3>$4,745</h3>
+                                                            <h5>Widthraw</h5>
+                                                        </div><!--bx-info end-->
+                                                    </div><!--pro-bx end-->
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+                                                </div><!--profile-bx-info end-->
+                                            </div>
+                                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                                <div class="profile-bx-info">
+                                                    <div class="pro-bx">
+                                                        <img src="/images/pro-icon3.png" alt="">
+                                                        <div class="bx-info">
+                                                            <h3>$1,145</h3>
+                                                            <h5>Sent</h5>
+                                                        </div><!--bx-info end-->
+                                                    </div><!--pro-bx end-->
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+                                                </div><!--profile-bx-info end-->
+                                            </div>
+                                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                                <div class="profile-bx-info">
+                                                    <div class="pro-bx">
+                                                        <img src="/images/pro-icon4.png" alt="">
+                                                        <div class="bx-info">
+                                                            <h3>130</h3>
+                                                            <h5>Total Projects</h5>
+                                                        </div><!--bx-info end-->
+                                                    </div><!--pro-bx end-->
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+                                                </div><!--profile-bx-info end-->
+                                            </div>
+                                        </div>
+                                    </div><!--profile-bx-details end-->
+                                    <div class="pro-work-status">
+                                        <!-- <h4>Work Status  -  Last Months Working Status</h4> -->
+                                    </div><!--pro-work-status end-->
+                                </div><!--acc-setting end-->
+                            </div>
+                            <div class="tab-pane fade" id="nav-password" role="tabpanel"
+                                 aria-labelledby="nav-password-tab">
+                                <div class="acc-setting">
+                                    <h3>Account Setting</h3>
+                                    <form>
+                                        <div class="cp-field">
+                                            <h5>Old Password</h5>
+                                            <div class="cpp-fiel">
+                                                <input type="text" name="old-password" placeholder="Old Password">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5>New Password</h5>
+                                            <div class="cpp-fiel">
+                                                <input type="text" name="new-password" placeholder="New Password">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5>Repeat Password</h5>
+                                            <div class="cpp-fiel">
+                                                <input type="text" name="repeat-password" placeholder="Repeat Password">
+                                                <i class="fa fa-lock"></i>
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5><a href="#" title="">Forgot Password?</a></h5>
+                                        </div>
+                                        <div class="save-stngs pd2">
+                                            <ul>
+                                                <li>
+                                                    <button type="submit">Save Setting</button>
+                                                </li>
+                                                <li>
+                                                    <button type="submit">Restore Setting</button>
+                                                </li>
+                                            </ul>
+                                        </div><!--save-stngs end-->
+                                    </form>
+                                </div><!--acc-setting end-->
+                            </div>
+                            <div class="tab-pane fade" id="nav-notification" role="tabpanel"
+                                 aria-labelledby="nav-notification-tab">
+                                <div class="acc-setting">
+                                    <h3>Notifications</h3>
+                                    <div class="notifications-list">
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img1.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.
+                                                </h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img2.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Poonam Verma</a> Bid on your Latest project.
+                                                </h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img3.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Tonney Dhman</a> Comment on your project.</h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img1.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.
+                                                </h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img1.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.
+                                                </h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img2.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Poonam Verma </a> Bid on your Latest project.
+                                                </h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img3.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Tonney Dhman</a> Comment on your project</h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/ny-img1.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.
+                                                </h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div><!--notfication-details end-->
+                                    </div><!--notifications-list end-->
+                                </div><!--acc-setting end-->
+                            </div>
+                            <div class="tab-pane fade" id="nav-requests" role="tabpanel"
+                                 aria-labelledby="nav-requests-tab">
+                                <div class="acc-setting">
+                                    <h3>Requests</h3>
+                                    <div class="requests-list">
+                                        <div class="request-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/r-img1.png" alt="">
+                                            </div>
+                                            <div class="request-info">
+                                                <h3>Jessica William</h3>
+                                                <span>Graphic Designer</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="submit" class="accept-req">Accept</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="submit" class="close-req"><i
+                                                                class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/r-img2.png" alt="">
+                                            </div>
+                                            <div class="request-info">
+                                                <h3>John Doe</h3>
+                                                <span>PHP Developer</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="submit" class="accept-req">Accept</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="submit" class="close-req"><i
+                                                                class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/r-img3.png" alt="">
+                                            </div>
+                                            <div class="request-info">
+                                                <h3>Poonam</h3>
+                                                <span>Wordpress Developer</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="submit" class="accept-req">Accept</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="submit" class="close-req"><i
+                                                                class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/r-img4.png" alt="">
+                                            </div>
+                                            <div class="request-info">
+                                                <h3>Bill Gates</h3>
+                                                <span>C & C++ Developer</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="submit" class="accept-req">Accept</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="submit" class="close-req"><i
+                                                                class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/r-img5.png" alt="">
+                                            </div>
+                                            <div class="request-info">
+                                                <h3>Jessica William</h3>
+                                                <span>Graphic Designer</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="submit" class="accept-req">Accept</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="submit" class="close-req"><i
+                                                                class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details">
+                                            <div class="noty-user-img">
+                                                <img src="/images/resources/r-img6.png" alt="">
+                                            </div>
+                                            <div class="request-info">
+                                                <h3>John Doe</h3>
+                                                <span>PHP Developer</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="submit" class="accept-req">Accept</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="submit" class="close-req"><i
+                                                                class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                    </div><!--requests-list end-->
+                                </div><!--acc-setting end-->
+                            </div>
+                            <div class="tab-pane fade" id="nav-deactivate" role="tabpanel"
+                                 aria-labelledby="nav-deactivate-tab">
+                                <div class="acc-setting">
+                                    <h3>信息编辑</h3>
+                                    <form>
+                                        <div class="cp-field">
+                                            <h5>用户名</h5>
+                                            <div class="cpp-fiel">
+                                                <input type="text" name="User Name" placeholder="UserName"
+                                                       id="User_name">
+                                                <i class=""></i>
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5>性别</h5>
+                                            <div class="cpp-fiel">
+                                                <input name="Sex" placeholder="Sex" id="sex">
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5>名</h5>
+                                            <div>
+                                                <input type="text" name="Firstname" placeholder="Firstname"
+                                                       id="firstname">
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5>姓</h5>
+                                            <div>
+                                                <input type="text" name="Lastname" placeholder="LastName" id="lastname">
+                                            </div>
+                                        </div>
+                                        <div class="cp-field">
+                                            <h5>电子邮箱</h5>
+                                            <div>
+                                                <input type="text" name="PhoneNumber" placeholder="PhoneNumber"
+                                                       id="email">
+                                            </div>
+                                        </div>
+<!--                                        <div class="cp-field">-->
+<!--                                            <h5>生日</h5>-->
+<!--                                            <div>-->
+<!--                                                <input type="text" name="Birthday" placeholder="Birthday" id="birthday">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+                                        <div class="save-stngs pd3">
+                                            <ul>
+                                                <li>
+                                                    <button type="button" onclick="f()">保存</button>
+                                                </li>
+                                                <li>
+                                                    <button onclick="cancel()">取消</button>
+                                                </li>
+                                            </ul>
+                                        </div><!--save-stngs end-->
+                                    </form>
+                                </div><!--acc-setting end-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--account-tabs-setting end-->
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="footy-sec mn no-margin">
+            <div class="container">
+                <ul>
+                    <li><a href="#" title="">Help Center</a></li>
+                    <li><a href="#" title="">Privacy Policy</a></li>
+                    <li><a href="#" title="">Community Guidelines</a></li>
+                    <li><a href="#" title="">Cookies Policy</a></li>
+                    <li><a href="#" title="">Career</a></li>
+                    <li><a href="#" title="">Forum</a></li>
+                    <li><a href="#" title="">Language</a></li>
+                    <li><a href="#" title="">Copyright Policy</a></li>
+                </ul>
+                <p><img src="../images/copy-icon2.png" alt="">Copyright 2017</p>
+                <img class="fl-rgt" src="../images/logo2.png" alt="">
+            </div>
+        </div>
+    </footer>
+
+</div><!--theme-layout end-->
+
+
+<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="../js/popper.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="../lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="../js/script.js"></script>
+
+
+</body>
+</html>

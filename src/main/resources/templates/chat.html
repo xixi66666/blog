@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.0.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.1.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>留言信箱</title>
+<!--    聊天模板css-->
+    <link rel="stylesheet" href="/css/session-eg.css">
+<!--    界面css-->
+    <link rel="stylesheet" type="text/css" href="/css/animate.css">
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+    <link rel="stylesheet" type="text/css" href="/css/line-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/css/line-awesome-font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+    <link rel="stylesheet" type="text/css" href="/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" type="text/css" href="/lib/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="/lib/slick/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+    <script type="text/javascript">
+
+        var websocket = null;
+        var fromUser = '';
+        var tUser = '';
+        var fromUserID;
+        var toUserID;
+
+        window.onbeforeunload = function () {
+            $.ajax({
+                url : "/releaseConnection/" + fromUser
+            })
+            var start = new Date().getTime();
+            while (true) {
+                if (new Date().getTime() - start > 50) {
+                    break;
+                }
+            }
+            websocket.close();
+        }
+
+        // window.onbeforeunload = function () {
+        //     $.ajax({
+        //         url : "/releaseConnection/" + fromUser
+        //     })
+        // }
+
+        function connectWebSocket(to) {
+            // var nickname = document.getElementById("nickname").value;
+            tUser = to;
+            $.ajax({
+                async: false,
+                url: "/checkForUserID/" + to,
+                success: function (result) {
+                    toUserID = result;
+                    // alert(toUserID);
+                }
+            })
+            // alert(tUser);
+            // let message = document.location.toString();
+            // var nickname = message.slice(message.lastIndexOf('/') + 1);
+            // fromUser = nickname;
+            // if (nickname === "") {
+            //     alert("对话通信连接建立失败，请刷新页面或稍后重试！");
+            //     return;
+            // }
+            //
+            // if ('WebSocket' in window) {
+            //     $.ajax({
+            //         url: "/checkWebSocket/" + nickname,
+            //         success: function (result) {
+            //             if (result == 1)
+            //                 return;
+            //             else
+            //                 websocket = new WebSocket("ws://localhost:8080/websocket/" + nickname);
+            //         }
+            //     })
+            //     websocket = new WebSocket("ws://localhost:8080/websocket/" + nickname);
+            // } else {
+            //     alert('Not support websocket')
+            // }
+
+            // websocket.onerror = function () {
+            //     setMessageInnerHTML("error");
+            // };
+            //
+            // websocket.onopen = function (event) {
+            //     setMessageInnerHTML("Loc MSG: 成功建立连接");
+            // }
+
+            websocket.onmessage = function (event) {
+                setTimeout(function () {
+                    $.ajax({
+                        async: false,
+                        url: "/searchRelatedMessage/" + fromUser + "/" + tUser,
+                        type: "GET",
+                        success: function (result) {
+                            // alert(result[0].receiver)
+                            process(result);
+                        }
+                    })
+                }, 1000)
+                var div = document.getElementById('chatArea');
+                div.scrollTop = div.scrollHeight;
+            }
+
+            // websocket.onclose = function () {
+            //     setMessageInnerHTML("Loc MSG:关闭连接");
+            // }
+
+            $.ajax({
+                async: false,
+                url: "/searchRelatedMessage/" + fromUser + "/" + tUser,
+                type: "GET",
+                success: function (result) {
+                    //alert(tUser);
+                    // alert(result[0].receiver)
+                    process(result);
+                }
+            })
+
+            var div = document.getElementById('chatArea');
+            div.scrollTop = div.scrollHeight;
+        }
+
+        function setMessageInnerHTML(innerHTML) {
+            document.getElementById('message').innerHTML += innerHTML + '<br/>';
+        }
+
+        function closeWebSocket() {
+            websocket.close();
+        }
+
+        function send() {
+            if ('WebSocket' in window) {
+                $.ajax({
+                    url: "/checkWebSocket/" + fromUser,
+                    success: function (result) {
+                        if (result == 1)
+                            return;
+                        else
+                            websocket = new WebSocket("ws://localhost:8080/websocket/" + fromUser);
+                    }
+                })
+            } else {
+                alert('Not support websocket')
+            }
+            var message = document.getElementById('textArea').value;
+            var toUser = tUser;
+            var socketMsg = {msg: message, toUser: toUser};
+            if (toUser == '') {
+                socketMsg.type = 0;
+            } else {
+                socketMsg.type = 1;
+            }
+            var date  = new Date();
+            websocket.send(JSON.stringify(socketMsg));
+
+            var temp = document.getElementById("test");
+            var newmessage = document.createElement("li");
+            newmessage.className = 'self';
+            newmessage.innerHTML =
+                '           <div class="avatar"><img src="/image/icon.png" alt=""></div>\n' +
+                '           <div class="msg">\n' +
+                '               <p class="msg-name">'+fromUser+'</p>\n' +
+                '               <p class="msg-text" style="color: #ffffff">'+ message +'<emoji class="pizza"></emoji></p>\n' +
+                '               <time>'+ date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() +'</time>\n' +
+                '           </div>\n';
+            temp.appendChild(newmessage);
+
+            // var li = document.createElement('li');
+            // var div1 = document.createElement('div');
+            // var img = document.createElement('img');
+            // var div2 = document.createElement('div');
+            // var p1 = document.createElement('p');
+            // var p2 = document.createElement('p');
+            // var emoji = document.createElement('emoji');
+            // var time = document.createElement('time');
+            // var date = new Date();
+            //
+            // li.className = 'self';
+            // div1.className = 'avatar';
+            // img.src = '/image/icon2.png';
+            // img.alt = '';
+            // div2.className = 'msg';
+            // p1.className = 'msg-name';
+            // p1.innerHTML = fromUser;
+            // p2.className = 'msg-text';
+            // p2.innerHTML = message;
+            // emoji.className = 'pizza';
+            // time.innerHTML = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+            // div1.appendChild(img);
+            // div2.appendChild(p1);
+            // div2.appendChild(p2);
+            // div2.appendChild(time);
+            // li.appendChild(div1);
+            // li.appendChild(div2);
+            // var node = document.getElementById('test');
+            // node.appendChild(li);
+            // var div = document.getElementById('chatArea');
+            // div.scrollTop = div.scrollHeight;
+            document.getElementById('textArea').value = '';
+        }
+
+        window.onload = function () {
+            let search = window.location.search;
+            //alert(search);
+            var div = document.getElementById('chatArea');
+            div.scrollTop = div.scrollHeight;
+            let message = document.location.toString();
+            let nickname = message.slice(message.lastIndexOf('/') + 1, message.indexOf('?'));
+            let passname;
+            $.ajax({
+                async:false, //must be async:false;
+                url:'/findUserNameByID/' + message.slice(message.indexOf('=') + 1),
+                success:function (result){
+                    passname = result;
+                }
+            })
+
+            //alert(passname);
+            fromUser = nickname;
+            $.ajax({
+                url: "/checkForUserID/" + fromUser,
+                success: function (result) {
+                    fromUserID = result;
+                    // alert(fromUserID)
+                }
+            })
+
+            if ('WebSocket' in window) {
+                $.ajax({
+                    url: "/checkWebSocket/" + nickname,
+                    success: function (result) {
+                        // alert(result)
+                        if (result == 1)
+                            return;
+                        else
+                            websocket = new WebSocket("ws://localhost:8080/websocket/" + nickname);
+                    }
+                })
+            } else {
+                alert('Not support websocket')
+            }
+            var textList = document.getElementById('test');
+            var record = textList.childNodes;
+            for (let i = record.length - 1; i >= 0; i--) {
+                textList.removeChild(record[i]);
+            }
+            let div1 = document.createElement('div');
+            div1.className = "list-box select";
+            div1.id = passname;
+            div1.innerHTML =
+                '\t\t\t\t\t\t\t<div class="list-box selected" onclick="connectWebSocket(this.id)" id="' + passname + '"><img class="chat-head" src="/image/icon.png" alt="">\n' +
+                '\t\t\t\t\t\t\t\t<div class="chat-rig"><p class="title">'+passname+'</p>\n' +
+                '\t\t\t\t\t\t\t\t\t<p class="text"></p></div></p>\n' +
+                '\t\t\t\t\t\t\t</div>\n';
+            let chatlist = document.getElementById('chat-list');
+            chatlist.appendChild(div1);
+            chatlist.innerHTML +=
+                '<br><br><br><br><div>\n' +
+                '    <p>用户昵称：</p>\n' +
+                '    <p>用户生日：</p>\n' +
+                '    <p>用户状态：</p>\n' +
+                '</div>\n'
+            tUser = passname;
+            //connectWebSocket(passname);
+            //document.getElementById(passname).onclick;
+        }
+
+        function process(msg) {
+            var textList = document.getElementById('test');
+            var record = textList.childNodes;
+            for (let i = record.length - 1; i >= 0; i--) {
+                textList.removeChild(record[i]);
+            }
+            // alert(msg.length);
+            for (let i = 0;i < msg.length;i ++) {
+                let receiver = msg[i].receiver;
+                if (receiver == toUserID)
+                    addSelfMessage(msg[i]);
+                else
+                    addOtherMessage(msg[i]);
+
+            }
+
+            // for (let i = msg.length - 1)
+        }
+
+        function addSelfMessage(data) {
+            // var popContent =
+            //     '<li className="other">' +
+            //         '<div className="avatar"><img src="../static/img/img-header2.jpg" alt=""></div>' +
+            //         '<div className="msg">' +
+            //             '<p className="msg-name">宋温暖</p>' +
+            //             '<p className="msg-text">测试多加一句话 <emoji className="pizza"></emoji></p>' +
+            //             '<time>20:18</time>' +
+            //         '</div>' +
+            //     '</li>';
+
+            var temp = document.getElementById("test");
+            var newmessage = document.createElement("li");
+            newmessage.className = 'self';
+            newmessage.innerHTML =
+                '                 <div class="avatar"><img src="/image/icon.png" alt=""></div>\n' +
+                '                 <div class="msg">\n' +
+                '                     <p class="msg-name">'+fromUser+'</p>\n' +
+                '                     <p class="msg-text" style="color: #ffffff">'+ data.content +'<emoji class="pizza"></emoji></p>\n' +
+                '                     <time>'+ data.date.toString().slice(0, data.date.toString().indexOf("T")) + ' ' + data.date.toString().slice(data.date.toString().indexOf("T") + 1, data.date.toString().indexOf("T")) +'</time>\n' +
+                '                 </div>\n'
+            temp.appendChild(newmessage);
+
+
+            // var li = document.createElement('li');
+            // var div1 = document.createElement('div');
+            // var img = document.createElement('img');
+            // var div2 = document.createElement('div');
+            // var p1 = document.createElement('p');
+            // var p2 = document.createElement('p');
+            // var emoji = document.createElement('emoji');
+            // var time = document.createElement('time');
+            // var date = new Date();
+            // li.className = 'self';
+            // div1.className = 'avatar';
+            // img.src = '/image/icon2.png';
+            // img.alt = '';
+            // div2.className = 'msg';
+            // p1.className = 'msg-name';
+            // p1.innerHTML = fromUser;
+            // p2.className = 'msg-text';
+            // p2.color = '#ffffff';
+            // p2.innerHTML = data.content;
+            // emoji.className = 'pizza';
+            // time.innerHTML = data.date.toString().slice(0, data.date.toString().indexOf('T')) + ' ' + data.date.toString().slice(data.date.toString().indexOf('T') + 1, data.date.toString().indexOf('.'));
+            // div1.appendChild(img);
+            // div2.appendChild(p1);
+            // div2.appendChild(p2);
+            // div2.appendChild(time);
+            // li.appendChild(div1);
+            // li.appendChild(div2);
+            // var node = document.getElementById('test');
+            // node.appendChild(li);
+            // var div = document.getElementById('chatArea');
+            // div.scrollTop = div.scrollHeight;
+        }
+
+        function addOtherMessage(data) {
+            var temp = document.getElementById("test");
+            var newmessage = document.createElement("li");
+            newmessage.className = 'other';
+            newmessage.innerHTML =
+                '                 <div class="avatar"><img src="/image/icon.png" alt=""></div>\n' +
+                '                 <div class="msg">\n' +
+                '                     <p class="msg-name">'+fromUser+'</p>\n' +
+                '                     <p class="msg-text" style="color: #ffffff">'+ data.content +'<emoji class="pizza"></emoji></p>\n' +
+                '                     <time>'+ data.date.toString().slice(0, data.date.toString().indexOf("T")) + ' ' + data.date.toString().slice(data.date.toString().indexOf("T") + 1, data.date.toString().indexOf("T")) +'</time>\n' +
+                '                 </div>\n';
+            temp.appendChild(newmessage);
+            // var li = document.createElement('li');
+            // var div1 = document.createElement('div');
+            // var img = document.createElement('img');
+            // var div2 = document.createElement('div');
+            // var p1 = document.createElement('p');
+            // var p2 = document.createElement('p');
+            // var emoji = document.createElement('emoji');
+            // var time = document.createElement('time');
+            // var date = new Date();
+            //
+            // li.className = 'other';
+            // div1.className = 'avatar';
+            // img.src = '/image/icon2.png';
+            // img.alt = '';
+            // div2.className = 'msg';
+            // p1.className = 'msg-name';
+            // p1.innerHTML = tUser;
+            // p2.className = 'msg-text';
+            // p2.innerHTML = data.content;
+            // emoji.className = 'pizza';
+            // time.innerHTML = data.date.toString().slice(0, data.date.toString().indexOf('T')) + ' ' + data.date.toString().slice(data.date.toString().indexOf('T') + 1, data.date.toString().indexOf('.'));
+            // div1.appendChild(img);
+            // div2.appendChild(p1);
+            // div2.appendChild(p2);
+            // div2.appendChild(time);
+            // li.appendChild(div1);
+            // li.appendChild(div2);
+            // var node = document.getElementById('test');
+            // node.appendChild(li);
+            // var div = document.getElementById('chatArea');
+            // div.scrollTop = div.scrollHeight;
+        }
+
+        function test() {
+            $.ajax({
+                url: "/searchRelatedMessage/tom",
+                type: "GET",
+                success: function (result) {
+                    // alert(result)
+                }
+            })
+        }
+
+    </script>
+</head>
+<!--  -->
+<style type="text/css">
+    body,ul,li,a
+    {
+        padding: 0;
+        margin: 0;
+    }
+    body
+    {
+        margin-top: 50px;
+        background-color:#e6e6e6;
+        color: #fff;
+    }
+    .menubar li
+    {
+        padding:0px 5px;
+        /*display:inline-block;*/
+        cursor: pointer;
+        line-height: 50px;
+        background-color:rgba(0, 0, 255, 0.3);
+    }
+    .menubar li:hover
+    {
+        background-color:#e44d3a;
+    }
+    .menubar li.menu-value
+    {
+        background-color: #0095bb;
+    }
+
+    .menubar a
+    {
+        display: block;
+        height: 50px;
+        font-family: "微软雅黑","Microsoft Yahei","Hiragino Sans GB",tahoma,arial,"宋体" ;
+        font-size: 15px;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+    }
+
+</style>
+
+<body style="background: rgba(255,0,0,0.07);margin-top: 0" >
+    <div class="wrapper">
+        <header>
+            <div class="container">
+                <div class="header-data">
+                    <div class="logo">
+                        <a href="index.html" title=""><img src="/images/logo.png" alt=""></a>
+                    </div><!--logo end-->
+                    <div class="search-bar">
+                        <form>
+                            <input type="text" name="search" placeholder="Search Friend Here..." id="id_input">
+                            <button type="submit"><i class="la la-search"></i></button>
+                        </form>
+                    </div><!--search-bar end-->
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="index.html" title="">
+                                    <span><img src="images/icon1.png" alt=""></span>
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="companies.html" title="">
+                                    <span><img src="images/icon2.png" alt=""></span>
+                                    Companies
+                                </a>
+                            </li>
+                            <li>
+                                <a href="projects.html" title="">
+                                    <span><img src="images/icon3.png" alt=""></span>
+                                    Projects
+                                </a>
+                            </li>
+                            <li>
+                                <a href="friendList.html" title="">
+                                    <span><img src="images/icon4.png" alt=""></span>
+                                    Profiles
+                                </a>
+                                <ul>
+                                    <li><a href="user-profile.html" title="">User Profile</a></li>
+                                    <li><a href="my-profile-feed.html" title="">my-profile-feed</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="jobs.html" title="">
+                                    <span><img src="images/icon5.png" alt=""></span>
+                                    Jobs
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="" class="not-box-open">
+                                    <span><img src="images/icon6.png" alt=""></span>
+                                    Messages
+                                </a>
+                                <div class="notification-box msg">
+                                    <div class="nt-title">
+                                        <h4>Setting</h4>
+                                        <a href="#" title="">Clear all</a>
+                                    </div>
+                                    <div class="nott-list">
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img1.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="messages.html" title="">Jassica William</a> </h3>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do.</p>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img2.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="messages.html" title="">Jassica William</a></h3>
+                                                <p>Lorem ipsum dolor sit amet.</p>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img3.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="messages.html" title="">Jassica William</a></h3>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempo incididunt ut labore et dolore magna aliqua.</p>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="view-all-nots">
+                                            <a href="messages.html" title="">View All Messsages</a>
+                                        </div>
+                                    </div><!--nott-list end-->
+                                </div><!--notification-box end-->
+                            </li>
+                            <li>
+                                <a href="./friendRequest" title="" class="not-box-open">
+                                    <span><img src="images/icon7.png" alt=""></span>
+                                    Notification
+                                </a>
+                                <div class="notification-box">
+                                    <div class="nt-title">
+                                        <h4>Setting</h4>
+                                        <a href="#" title="">Clear all</a>
+                                    </div>
+                                    <div class="nott-list">
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img1.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img2.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img3.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="notfication-details">
+                                            <div class="noty-user-img">
+                                                <img src="images/resources/ny-img2.png" alt="">
+                                            </div>
+                                            <div class="notification-info">
+                                                <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+                                                <span>2 min ago</span>
+                                            </div><!--notification-info -->
+                                        </div>
+                                        <div class="view-all-nots">
+                                            <a href="#" title="">View All Notification</a>
+                                        </div>
+                                    </div><!--nott-list end-->
+                                </div><!--notification-box end-->
+                            </li>
+                        </ul>
+                    </nav><!--nav end-->
+                    <div class="menu-btn">
+                        <a href="#" title=""><i class="fa fa-bars"></i></a>
+                    </div><!--menu-btn end-->
+                    <div class="user-account">
+                        <div class="user-info">
+                            <img src="images/resources/user.png" alt="">
+                            <a href="#" title="" id="user">tom</a>
+                            <a href="#" title="">UID:</a>
+                            <a href="#" title="" id="current_UID"></a>
+                            <i class="la la-sort-down"></i>
+                        </div>
+                        <div class="user-account-settingss">
+                            <h3>Online Status</h3>
+                            <ul class="on-off-status">
+                                <li>
+                                    <div class="fgt-sec">
+                                        <input type="radio" name="cc" id="c5">
+                                        <label for="c5">
+                                            <span></span>
+                                        </label>
+                                        <small>Online</small>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fgt-sec">
+                                        <input type="radio" name="cc" id="c6">
+                                        <label for="c6">
+                                            <span></span>
+                                        </label>
+                                        <small>Offline</small>
+                                    </div>
+                                </li>
+                            </ul>
+                            <h3>Custom Status</h3>
+                            <div class="search_form">
+                                <form>
+                                    <input type="text" name="search">
+                                    <button type="submit">Ok</button>
+                                </form>
+                            </div><!--search_form end-->
+                            <h3>Setting</h3>
+                            <ul class="us-links">
+                                <li><a href="profile-account-setting.html" title="">Account Setting</a></li>
+                                <li><a href="#" title="">Privacy</a></li>
+                                <li><a href="#" title="">Faqs</a></li>
+                                <li><a href="#" title="">Terms & Conditions</a></li>
+                            </ul>
+                            <h3 class="tc"><a href="#" title="">Logout</a></h3>
+                        </div><!--user-account-settingss end-->
+                    </div>
+                </div><!--header-data end-->
+            </div>
+        </header><!--header end-->
+        <div class="main" style="background: white;text-align: center;margin-top: 20px">
+            <div class="top" style="margin-top: 80px;background-color: #e44d3a">
+<!--                <button type="submit" style="margin-top: 20px;margin-left: 30px;margin-right: 50px;background: #e44d3a;font-weight: bold;border-color: white" class="button"><i class="la la-search"></i>返回主页</button>-->
+<!--                <button type="submit"><i class="la la-search"></i></button>-->
+                <a href="/friendList" style="margin-top: 24px;margin-left: 20px;float: left;color: #ffffff;">◀--返回好友列表 </a>
+            </div>
+            <div class="box">
+                <div class="chat-list" id="chat-list">
+                    <div class="list-box">
+                        <img class="chat-head" src="/image/icon.png" alt="">
+                        <div class="chat-rig">
+                            <p class="title">公众号</p>
+                            <p class="text">紧急！！！</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-right">
+                    <div class="recvfrom">
+                        <div class="nav-top">
+                            <p id="chatname">正在进行对话...</p>
+                        </div>
+                        <div class="news-top" id="chatArea">
+                            <ul id="test">
+                                <li class="other">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg" >
+                                        <p class="msg-name">jerry</p>
+                                        <p class="msg-text" style="color: #35fa4d">在吗？干票大的干不干？<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                                <li class="self">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg">
+                                        <p class="msg-name">tom</p>
+                                        <p class="msg-text">？<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                                <li class="other">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg">
+                                        <p class="msg-name">jerry</p>
+                                        <p class="msg-text">我把白宫控制了<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                                <li class="self">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg">
+                                        <p class="msg-name">tom</p>
+                                        <p class="msg-text">真假？<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                                <li class="other">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg">
+                                        <p class="msg-name">jerry</p>
+                                        <p class="msg-text">肯定是真的啊<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                                <li class="self">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg">
+                                        <p class="msg-name">tom</p>
+                                        <p class="msg-text">所以你要？<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                                <li class="other">
+                                    <div class="avatar"><img src="/image/icon.png" alt=""></div>
+                                    <div class="msg">
+                                        <p class="msg-name">jerry</p>
+                                        <p class="msg-text">对！<emoji class="pizza"></emoji></p>
+                                        <time>20:18</time>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="sendto">
+                        <div class="but-nav">
+                            <ul>
+                                <li class="font"></li>
+                                <li class="face"></li>
+                                <li class="cut"></li>
+                                <li class="page"></li>
+                                <li class="old"></li>
+                            </ul>
+                        </div>
+                        <div class="but-text">
+                            <textarea name="" id="textArea" cols="110" rows="6"></textarea>
+                            <a href="#" class="button" onclick="send()" style="color: #ffffff;background: #e44d3a;font-weight: bold;">发送</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div><!--theme-layout end-->
+
+
+
+
+
+ 
+</body>
+</html>

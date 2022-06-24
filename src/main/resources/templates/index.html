@@ -1,0 +1,840 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>博客-主页</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="stylesheet" type="text/css" href="/css/animate.css">
+<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+<link rel="stylesheet" type="text/css" href="/css/line-awesome.css">
+<link rel="stylesheet" type="text/css" href="/css/line-awesome-font-awesome.min.css">
+<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery.mCustomScrollbar.min.css">
+<link rel="stylesheet" type="text/css" href="/lib/slick/slick.css">
+<link rel="stylesheet" type="text/css" href="/lib/slick/slick-theme.css">
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" type="text/css" href="/css/responsive.css">
+	<script>
+		let user = [];
+		function turnToContent(id){
+			window.open("/content?blogID="+id);
+		}
+		window.onload = function () {
+
+			$.ajax({
+				async: false,
+				url: "/loadAllUser",
+				success: function (result) {
+					user = result;
+					// for (let i = 0; i < user.length; i++) {
+					// 	alert(user[i]);
+					// }
+				}
+			})
+
+			$.ajax({
+				url: "/loadBlog",
+				success: function (result) {
+					let blog = document.getElementById("blogtext");
+					for (let i = 0; i < result.length; i++) {
+						if (result[i].draft == 1)
+							continue;
+						let div = document.createElement('div');
+						div.className='post-bar';
+						div.innerHTML =
+								'<div class="post_topbar">\n' +
+								'<div class="usy-dt">\n' +
+								'<img src="images/resources/us-pic.png" alt="">\n' +
+								'<div class="usy-name">\n' +
+								'<h3>'+user[result[i].userId - 1]+'</h3>\n' +
+						'<span><img src="images/clock.png" alt="">3 min ago</span>\n' +
+						'</div>\n' +
+						'</div>\n' +
+						'<div class="ed-opts">\n' +
+								'<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>\n' +
+						'<ul class="ed-options">\n' +
+								'<li><a href="#" title="">Edit Post</a></li>\n' +
+						'<li><a href="#" title="">Unsaved</a></li>\n' +
+						'<li><a href="#" title="">Unbid</a></li>\n' +
+						'<li><a href="#" title="">Close</a></li>\n' +
+						'<li><a href="#" title="">Hide</a></li>\n' +
+						'</ul>\n' +
+						'</div>\n' +
+						'</div>\n' +
+						'<div class="epi-sec">\n' +
+								'<ul class="descp">\n' +
+								'<li><img src="images/icon8.png" alt=""><span>'+result[i].date.substring(0, result[i].date.indexOf(".")).replace("T", " ")+'</span></li>\n' +
+						'<li><img src="images/icon9.png" alt=""><span>中国·陕西·西安</span></li>\n' +
+						'</ul>\n' +
+						'<ul class="bk-links">\n' +
+						'		<li><a href="#" title=""><i class="la la-bookmark"></i></a></li>\n' +
+						'<li><a href="#" title=""><i class="la la-envelope"></i></a></li>\n' +
+						'</ul>\n' +
+						'</div>\n' +
+						'<div class="job_descp">\n' +
+								'<h3>'+result[i].title+'</h3>\n' +
+						'<ul class="job-dt">\n' +
+						'</ul>\n' +
+						'<p>'+result[i].description.replace(/<[^>]*>|/g,"").substring(0, 51)+'<br><br><a href="javascript:void(0)" title="" id="'+result[i].id+'" onclick="turnToContent(this.id)" style="color: #e44d3a;font-weight: bold">查看详情</a></p>\n' +
+						'<ul class="skill-tags">\n' +
+						'		<li><a href="#" title="">'+result[i].tag+'</a></li>\n' +
+						'</ul>\n' +
+						'</div>\n' +
+						'<div class="job-status-bar">\n' +
+								'<ul class="like-com">\n' +
+								'<li>\n' +
+								'<a href="#"><i class="la la-heart"></i> 赞</a>\n' +
+						'<img src="images/liked-img.png" alt="">\n' +
+								'<span>'+result[i].agreeNum+'</span>\n' +
+								'</li>\n' +
+								'<li><a href="#" title="" class="com"><img src="images/com.png" alt=""> 评论数 '+result[i].commentNum+'</a></li>\n' +
+						'</ul>\n' +
+						'<a><i class="la la-eye"></i>浏览量 '+result[i].views+'</a>\n' +
+						'</div>\n';
+						blog.appendChild(div);
+					}
+					blog.innerHTML +=
+							'<div class="process-comm">\n' +
+							'<a href="#" title=""><img src="images/process-icon.png" alt=""></a>\n' +
+							'</div><!--process-comm end-->\n';
+				}
+			})
+
+			$.ajax({
+				url: "/findBlogsByView",
+				success: function (result) {
+					let div = document.getElementById("top_blogs");
+					for (let i = 0; i < result.length; i++) {
+						let div1 = document.createElement("div");
+						div1.className = "job-info";
+						div1.innerHTML =
+								'<div style="margin-bottom: 10px">\n' +
+								'	<a href="javascript:void(0)" style="color: #e44d3a;font-weight: bold;" onclick="turnToContent('+result[i].id+')"><img id="'+i+'" alt="" src="images/price'+i+'.png">&nbsp;&nbsp;&nbsp;'+result[i].title+'</a><br>\n' +
+								'</div>\n' +
+								'<div>\n' +
+								'	<span style="margin-left: 20px;color: grey">'+result[i].date.substring(0, result[i].date.indexOf(".")).replace("T", " ")+'</span>\n' +
+								'</div>\n';
+
+						div.appendChild(div1);
+
+					}
+				}
+			});
+
+			$.ajax({
+				url: "/loadAllTags",
+				success: function (result) {
+					let ul = document.getElementById("tag_ul");
+					let all = document.createElement('li');
+					all.innerHTML = '<a id="全部" href="javascript:void(0)" title="" onclick="getRelatedBlogsByTag(this.id)">全部</a>';
+					ul.appendChild(all);
+					for (let i = 0; i < result.length; i++) {
+						// <li><a href="#" title="">Help Center</a></li>
+						let li = document.createElement('li');
+						li.innerHTML = '<a id="'+result[i].name+'" href="javascript:void(0)" title="" onclick="getRelatedBlogsByTag(this.id)">'+result[i].name+'</a>';
+						ul.appendChild(li);
+					}
+				}
+			})
+			
+			$.ajax({
+				url: "/findUnknownFriend/" + localStorage.getItem("userID"),
+				success: function (result) {
+					let div = document.getElementById("suggestion");
+					for (let i = 0; i < result.length; i++) {
+						// <div className="suggestion-usd">
+						// 	<img src="images/resources/s1.png" alt="">
+						// 		<div className="sgt-text">
+						// 			<h4>Jessica William</h4>
+						// 			<span>Graphic Designer</span>
+						// 		</div>
+						// 		<span><i className="la la-plus"></i></span>
+						// </div>
+						let div1 = document.createElement("div");
+						div1.className = "suggestion-usd";
+						div1.innerHTML =
+								'<img src="images/resources/s'+(i % 6 + 1)+'.png" alt="">\n' +
+								'	<div class="sgt-text">\n' +
+								'		<h4>'+result[i].user_name+'</h4>\n' +
+								'		<span>'+result[i].email+'</span>\n' +
+								'	</div>\n' +
+								'	<span><i id="'+result[i].user_ID+'" class="la la-plus" onclick="makeFriendRequest(this.id)"></i></span>\n';
+						div.appendChild(div1);
+					}
+				}
+			})
+
+			document.getElementById("top_UID").innerText = user[localStorage.getItem("userID") - 1];
+			document.getElementById("left_UID").innerText = user[localStorage.getItem("userID") - 1];
+		}
+
+		function getUserName(id) {
+			$.ajax({
+				url: "/findUserNameByID/" + id,
+				success: function (result) {
+					alert(result)
+					return result;
+				}
+			})
+		}
+
+		function makeFriendRequest(friend_id) {
+			let userid = localStorage.getItem("userID");
+			$.ajax({
+				url:"/requestMaker",
+				type:"post",
+				data:{
+					reciver:friend_id,
+					sponsor:userid
+				},
+				dataType: "text",
+				success:function (result) {
+					alert("已发送添加请求，请等待对方回复");
+					document.getElementById(friend_id).style.display = "none";
+				}
+			})
+		}
+
+		function getRelatedBlogsByTag(tag) {
+			$.ajax({
+				url: "/loadBlog",
+				success: function (result) {
+					let blog = document.getElementById("blogtext");
+					blog.innerHTML = "";
+					for (let i = 0; i < result.length; i++) {
+						if (result[i].tag == tag || tag == "全部") {
+							let div = document.createElement('div');
+							div.className='post-bar';
+							div.innerHTML =
+									'<div class="post_topbar">\n' +
+									'<div class="usy-dt">\n' +
+									'<img src="images/resources/us-pic.png" alt="">\n' +
+									'<div class="usy-name">\n' +
+									'<h3>'+user[result[i].userId - 1]+'</h3>\n' +
+									'<span><img src="images/clock.png" alt="">3 min ago</span>\n' +
+									'</div>\n' +
+									'</div>\n' +
+									'<div class="ed-opts">\n' +
+									'<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>\n' +
+									'<ul class="ed-options">\n' +
+									'<li><a href="#" title="">Edit Post</a></li>\n' +
+									'<li><a href="#" title="">Unsaved</a></li>\n' +
+									'<li><a href="#" title="">Unbid</a></li>\n' +
+									'<li><a href="#" title="">Close</a></li>\n' +
+									'<li><a href="#" title="">Hide</a></li>\n' +
+									'</ul>\n' +
+									'</div>\n' +
+									'</div>\n' +
+									'<div class="epi-sec">\n' +
+									'<ul class="descp">\n' +
+									'<li><img src="images/icon8.png" alt=""><span>'+result[i].date.substring(0, result[i].date.indexOf(".")).replace("T", " ")+'</span></li>\n' +
+									'<li><img src="images/icon9.png" alt=""><span>中国·陕西·西安</span></li>\n' +
+									'</ul>\n' +
+									'<ul class="bk-links">\n' +
+									'		<li><a href="#" title=""><i class="la la-bookmark"></i></a></li>\n' +
+									'<li><a href="#" title=""><i class="la la-envelope"></i></a></li>\n' +
+									'</ul>\n' +
+									'</div>\n' +
+									'<div class="job_descp">\n' +
+									'<h3>'+result[i].title+'</h3>\n' +
+									'<ul class="job-dt">\n' +
+									'</ul>\n' +
+									'<p>'+result[i].description.replace(/<[^>]*>|/g,"").substring(0, 51)+'<br><br><a href="javascript:void(0)" title="" id="'+result[i].id+'" onclick="turnToContent(this.id)" style="color: #e44d3a;font-weight: bold">查看详情</a></p>\n' +
+									'<ul class="skill-tags">\n' +
+									'		<li><a href="#" title="">'+result[i].tag+'</a></li>\n' +
+									'</ul>\n' +
+									'</div>\n' +
+									'<div class="job-status-bar">\n' +
+									'<ul class="like-com">\n' +
+									'<li>\n' +
+									'<a href="#"><i class="la la-heart"></i> 赞</a>\n' +
+									'<img src="images/liked-img.png" alt="">\n' +
+									'<span>'+result[i].agreeNum+'</span>\n' +
+									'</li>\n' +
+									'<li><a href="#" title="" class="com"><img src="images/com.png" alt=""> 评论数 '+result[i].commentNum+'</a></li>\n' +
+									'</ul>\n' +
+									'<a><i class="la la-eye"></i>浏览量 '+result[i].views+'</a>\n' +
+									'</div>\n';
+							blog.appendChild(div);
+						}
+					}
+					blog.innerHTML +=
+							'<div class="process-comm">\n' +
+							'<a href="#" title=""><img src="images/process-icon.png" alt=""></a>\n' +
+							'</div><!--process-comm end-->\n';
+				}
+			})
+		}
+
+
+	</script>
+</head>
+
+
+<body>
+
+	
+
+	<div class="wrapper">
+		
+
+
+		<header>
+			<div class="container">
+				<div class="header-data">
+					<div class="logo">
+						<a href="index" title=""><img src="images/logo.png" alt=""></a>
+					</div><!--logo end-->
+					<div class="search-bar">
+						<form>
+							<input type="text" name="search" placeholder="输入搜索内容...">
+							<button type="submit"><i class="la la-search"></i></button>
+						</form>
+					</div><!--search-bar end-->
+					<nav>
+						<ul>
+							<li>
+								<a href="/" title="">
+									<span><img src="images/icon1.png" alt=""></span>
+									主页
+								</a>
+							</li>
+							<li>
+								<a href="friendList" title="">
+									<span><img src="images/icon4.png" alt=""></span>
+									好友
+								</a>
+								<ul>
+									<li><a href="user-profile.html" title="">User Profile</a></li>
+									<li><a href="my-profile-feed.html" title="">my-profile-feed</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#" title="" class="not-box-open">
+									<span><img src="images/icon6.png" alt=""></span>
+									留言
+								</a>
+								<div class="notification-box msg">
+									<div class="nt-title">
+										<h4>Setting</h4>
+										<a href="#" title="">Clear all</a>
+									</div>
+									<div class="nott-list">
+										<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img1.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="messages.html" title="">Jassica William</a> </h3>
+							  					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do.</p>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img2.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="messages.html" title="">Jassica William</a></h3>
+							  					<p>Lorem ipsum dolor sit amet.</p>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img3.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="messages.html" title="">Jassica William</a></h3>
+							  					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempo incididunt ut labore et dolore magna aliqua.</p>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="view-all-nots">
+						  					<a href="messages.html" title="">View All Messsages</a>
+						  				</div>
+									</div><!--nott-list end-->
+								</div><!--notification-box end-->
+							</li>
+							<li>
+								<a href="#" title="" class="not-box-open">
+									<span><img src="images/icon7.png" alt=""></span>
+									通知
+								</a>
+								<div class="notification-box">
+									<div class="nt-title">
+										<h4>Setting</h4>
+										<a href="#" title="">Clear all</a>
+									</div>
+									<div class="nott-list">
+										<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img1.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img2.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img3.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="notfication-details">
+							  				<div class="noty-user-img">
+							  					<img src="images/resources/ny-img2.png" alt="">
+							  				</div>
+							  				<div class="notification-info">
+							  					<h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
+							  					<span>2 min ago</span>
+							  				</div><!--notification-info -->
+						  				</div>
+						  				<div class="view-all-nots">
+						  					<a href="#" title="">View All Notification</a>
+						  				</div>
+									</div><!--nott-list end-->
+								</div><!--notification-box end-->
+							</li>
+						</ul>
+					</nav><!--nav end-->
+					<div class="menu-btn">
+						<a href="#" title=""><i class="fa fa-bars"></i></a>
+					</div><!--menu-btn end-->
+					<div class="user-account">
+						<div class="user-info">
+							<img src="images/resources/user.png" alt="">
+							<a href="#" title="" id="top_UID">123</a>
+							<i class="la la-sort-down"></i>
+						</div>
+						<div class="user-account-settingss">
+							<h3>当前状态</h3>
+							<ul class="on-off-status">
+								<li>
+									<div class="fgt-sec">
+										<input type="radio" name="cc" id="c5">
+										<label for="c5">
+											<span></span>
+										</label>
+										<small>在线</small>
+									</div>
+								</li>
+								<li>
+									<div class="fgt-sec">
+										<input type="radio" name="cc" id="c6">
+										<label for="c6">
+											<span></span>
+										</label>
+										<small>离线</small>
+									</div>
+								</li>
+							</ul>
+							<h3>设置</h3>
+							<ul class="us-links">
+								<li><a href="profile-account-setting.html" title="">用户信息设置</a></li>
+								<li><a href="#" title="">问题与反馈</a></li>
+							</ul>
+							<h3 class="tc"><a href="javascript:void(0)" onclick="window.location.href = './signIn';localStorage.removeItem('userID');" title="">退出登录</a></h3>
+						</div><!--user-account-settingss end-->
+					</div>
+				</div><!--header-data end-->
+			</div>
+		</header><!--header end-->	
+
+		<main>
+			<div class="main-section">
+				<div class="container">
+					<div class="main-section-data">
+						<div class="row">
+							<div class="col-lg-3 col-md-4 pd-left-none no-pd">
+								<div class="main-left-sidebar no-margin">
+									<div class="user-data full-width">
+										<div class="user-profile">
+											<div class="username-dt">
+												<div class="usr-pic">
+													<img src="images/resources/user-pic.png" alt="">
+												</div>
+											</div><!--username-dt end-->
+											<div class="user-specs">
+												<h3 id="left_UID"></h3>
+												<span>欢迎使用博客系统.</span>
+											</div>
+										</div><!--user-profile end-->
+										<ul class="user-fw-status">
+											<li>
+												<h4>关注</h4>
+												<span>34</span>
+											</li>
+											<li>
+												<h4>粉丝</h4>
+												<span>155</span>
+											</li>
+											<li>
+												<a  href="javascript:void(0)" title="" onclick="window.open('/personPage?UID='+localStorage.getItem('userID'))">进入主页</a>
+											</li>
+										</ul>
+									</div><!--user-data end-->
+									<div class="suggestions full-width">
+										<div class="sd-title">
+											<h3>推荐好友</h3>
+											<i class="la la-ellipsis-v"></i>
+										</div><!--sd-title end-->
+										<div class="suggestions-list" id="suggestion">
+
+										</div><!--suggestions-list end-->
+									</div><!--suggestions end-->
+									<div class="tags-sec full-width">
+										<ul>
+											<li><a href="#" title="">帮助中心</a></li>
+											<li><a href="#" title="">关于我们</a></li>
+											<li><a href="#" title="">隐私政策</a></li>
+											<li><a href="#" title="">社区指南</a></li>
+											<li><a href="#" title="">Cookies政策</a></li>
+											<li><a href="#" title="">语言</a></li>
+											<li><a href="#" title="">问题反馈</a></li>
+											<li><a href="#" title="">版权政策</a></li>
+										</ul>
+										<div class="cp-sec">
+											<img src="images/logo2.png" alt="">
+											<p><img src="images/cp.png" alt="">Copyright 2022</p>
+										</div>
+									</div><!--tags-sec end-->
+								</div><!--main-left-sidebar end-->
+							</div>
+							<div class="col-lg-6 col-md-8 no-pd">
+								<div class="main-ws-sec">
+									<div class="post-topbar">
+										<div class="user-picy">
+											<img src="images/resources/user-pic.png" alt="">
+										</div>
+										<div class="post-st">
+											<ul>
+												<li><a href="javascript:void(0)" title="" onclick="window.open('/toBlogEditor')" style="background-color: #e44d3a;color: white">编辑/发布博客</a></li>
+											</ul>
+										</div><!--post-st end-->
+									</div><!--post-topbar end-->
+									<div class="posts-section" id="blogtext">
+
+
+									</div><!--posts-section end-->
+								</div><!--main-ws-sec end-->
+							</div>
+							<div class="col-lg-3 pd-right-none no-pd">
+								<div class="right-sidebar">
+									<div class="widget widget-about">
+										<img src="images/wd-logo.png" alt="">
+										<h4>在此分享生活中的点点滴滴</h4><br><br>
+										<span>祝您使用愉快</span>
+										<div class="sign_link">
+											<a href="sign-in.html" title="">登录</a>
+										</div>
+									</div><!--widget-about end-->
+									<div class="widget widget-jobs">
+										<div class="sd-title">
+											<h3>热搜博客</h3>
+											<i class="la la-ellipsis-v"></i>
+										</div>
+										<div class="jobs-list" id="top_blogs">
+										</div><!--jobs-list end-->
+									</div><!--widget-jobs end-->
+									<div class="tags-sec full-width" style="padding: 5px">
+										<div class="sd-title" style="margin-bottom: 5px;margin-left: 0">
+											<h3>标签检索</h3>
+										</div>
+										<ul id="tag_ul">
+										</ul>
+									</div><!--tags-sec end-->
+								</div><!--right-sidebar end-->
+							</div>
+						</div>
+					</div><!-- main-section-data end-->
+				</div> 
+			</div>
+		</main>
+
+
+
+
+		<div class="post-popup pst-pj">
+			<div class="post-project">
+				<h3>Post a project</h3>
+				<div class="post-project-fields">
+					<form>
+						<div class="row">
+							<div class="col-lg-12">
+								<input type="text" name="title" placeholder="Title">
+							</div>
+							<div class="col-lg-12">
+								<div class="inp-field">
+									<select>
+										<option>Category</option>
+										<option>Category 1</option>
+										<option>Category 2</option>
+										<option>Category 3</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<input type="text" name="skills" placeholder="Skills">
+							</div>
+							<div class="col-lg-12">
+								<div class="price-sec">
+									<div class="price-br">
+										<input type="text" name="price1" placeholder="Price">
+										<i class="la la-dollar"></i>
+									</div>
+									<span>To</span>
+									<div class="price-br">
+										<input type="text" name="price1" placeholder="Price">
+										<i class="la la-dollar"></i>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<textarea name="description" placeholder="Description"></textarea>
+							</div>
+							<div class="col-lg-12">
+								<ul>
+									<li><button class="active" type="submit" value="post">Post</button></li>
+									<li><a href="#" title="">Cancel</a></li>
+								</ul>
+							</div>
+						</div>
+					</form>
+				</div><!--post-project-fields end-->
+				<a href="#" title=""><i class="la la-times-circle-o"></i></a>
+			</div><!--post-project end-->
+		</div><!--post-project-popup end-->
+
+		<div class="post-popup job_post">
+			<div class="post-project">
+				<h3>Post a job</h3>
+				<div class="post-project-fields">
+					<form>
+						<div class="row">
+							<div class="col-lg-12">
+								<input type="text" name="title" placeholder="Title">
+							</div>
+							<div class="col-lg-12">
+								<div class="inp-field">
+									<select>
+										<option>Category</option>
+										<option>Category 1</option>
+										<option>Category 2</option>
+										<option>Category 3</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<input type="text" name="skills" placeholder="Skills">
+							</div>
+							<div class="col-lg-6">
+								<div class="price-br">
+									<input type="text" name="price1" placeholder="Price">
+									<i class="la la-dollar"></i>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="inp-field">
+									<select>
+										<option>Full Time</option>
+										<option>Half time</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<textarea name="description" placeholder="Description"></textarea>
+							</div>
+							<div class="col-lg-12">
+								<ul>
+									<li><button class="active" type="submit" value="post">Post</button></li>
+									<li><a href="#" title="">Cancel</a></li>
+								</ul>
+							</div>
+						</div>
+					</form>
+				</div><!--post-project-fields end-->
+				<a href="#" title=""><i class="la la-times-circle-o"></i></a>
+			</div><!--post-project end-->
+		</div><!--post-project-popup end-->
+
+
+
+		<div class="chatbox-list">
+			<div class="chatbox">
+				<div class="chat-mg">
+					<a href="#" title=""><img src="images/resources/usr-img1.png" alt=""></a>
+					<span>2</span>
+				</div>
+				<div class="conversation-box">
+					<div class="con-title mg-3">
+						<div class="chat-user-info">
+							<img src="images/resources/us-img1.png" alt="">
+							<h3>John Doe <span class="status-info"></span></h3>
+						</div>
+						<div class="st-icons">
+							<a href="#" title=""><i class="la la-cog"></i></a>
+							<a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
+							<a href="#" title="" class="close-chat"><i class="la la-close"></i></a>
+						</div>
+					</div>
+					<div class="chat-hist mCustomScrollbar" data-mcs-theme="dark">
+						<div class="chat-msg">
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+							<span>Sat, Aug 23, 1:10 PM</span>
+						</div>
+						<div class="date-nd">
+							<span>Sunday, August 24</span>
+						</div>
+						<div class="chat-msg st2">
+							<p>Cras ultricies ligula.</p>
+							<span>5 minutes ago</span>
+						</div>
+						<div class="chat-msg">
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+							<span>Sat, Aug 23, 1:10 PM</span>
+						</div>
+					</div><!--chat-list end-->
+					<div class="typing-msg">
+						<form>
+							<textarea placeholder="Type a message here"></textarea>
+							<button type="submit"><i class="fa fa-send"></i></button>
+						</form>
+						<ul class="ft-options">
+							<li><a href="#" title=""><i class="la la-smile-o"></i></a></li>
+							<li><a href="#" title=""><i class="la la-camera"></i></a></li>
+							<li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
+						</ul>
+					</div><!--typing-msg end-->
+				</div><!--chat-history end-->
+			</div>
+			<div class="chatbox">
+				<div class="chat-mg">
+					<a href="#" title=""><img src="images/resources/usr-img2.png" alt=""></a>
+				</div>
+				<div class="conversation-box">
+					<div class="con-title mg-3">
+						<div class="chat-user-info">
+							<img src="images/resources/us-img1.png" alt="">
+							<h3>John Doe <span class="status-info"></span></h3>
+						</div>
+						<div class="st-icons">
+							<a href="#" title=""><i class="la la-cog"></i></a>
+							<a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
+							<a href="#" title="" class="close-chat"><i class="la la-close"></i></a>
+						</div>
+					</div>
+					<div class="chat-hist mCustomScrollbar" data-mcs-theme="dark">
+						<div class="chat-msg">
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+							<span>Sat, Aug 23, 1:10 PM</span>
+						</div>
+						<div class="date-nd">
+							<span>Sunday, August 24</span>
+						</div>
+						<div class="chat-msg st2">
+							<p>Cras ultricies ligula.</p>
+							<span>5 minutes ago</span>
+						</div>
+						<div class="chat-msg">
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+							<span>Sat, Aug 23, 1:10 PM</span>
+						</div>
+					</div><!--chat-list end-->
+					<div class="typing-msg">
+						<form>
+							<textarea placeholder="Type a message here"></textarea>
+							<button type="submit"><i class="fa fa-send"></i></button>
+						</form>
+						<ul class="ft-options">
+							<li><a href="#" title=""><i class="la la-smile-o"></i></a></li>
+							<li><a href="#" title=""><i class="la la-camera"></i></a></li>
+							<li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
+						</ul>
+					</div><!--typing-msg end-->
+				</div><!--chat-history end-->
+			</div>
+			<div class="chatbox">
+				<div class="chat-mg bx">
+					<a href="#" title=""><img src="images/chat.png" alt=""></a>
+					<span>2</span>
+				</div>
+				<div class="conversation-box">
+					<div class="con-title">
+						<h3>Messages</h3>
+						<a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
+					</div>
+					<div class="chat-list">
+						<div class="conv-list active">
+							<div class="usrr-pic">
+								<img src="images/resources/usy1.png" alt="">
+								<span class="active-status activee"></span>
+							</div>
+							<div class="usy-info">
+								<h3>John Doe</h3>
+								<span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
+							</div>
+							<div class="ct-time">
+								<span>1:55 PM</span>
+							</div>
+							<span class="msg-numbers">2</span>
+						</div>
+						<div class="conv-list">
+							<div class="usrr-pic">
+								<img src="images/resources/usy2.png" alt="">
+							</div>
+							<div class="usy-info">
+								<h3>John Doe</h3>
+								<span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
+							</div>
+							<div class="ct-time">
+								<span>11:39 PM</span>
+							</div>
+						</div>
+						<div class="conv-list">
+							<div class="usrr-pic">
+								<img src="images/resources/usy3.png" alt="">
+							</div>
+							<div class="usy-info">
+								<h3>John Doe</h3>
+								<span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
+							</div>
+							<div class="ct-time">
+								<span>0.28 AM</span>
+							</div>
+						</div>
+					</div><!--chat-list end-->
+				</div><!--conversation-box end-->
+			</div>
+		</div><!--chatbox-list end-->
+
+	</div><!--theme-layout end-->
+
+
+
+<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="js/popper.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="js/scrollbar.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+
+</body>
+</html>

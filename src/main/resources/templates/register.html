@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.0.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.1.min.js"></script>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <script type="text/javascript">
+        function f()
+        {
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            $.ajax({
+                url:"/registertest",
+                type:"POST",
+                // dataType: "JSON",
+                data:{
+                    "email" : email,
+                    "password" : password
+                }
+            })
+
+        }
+    </script>
+</head>
+<body>
+邮箱：<input type="email" id="email">
+密码：<input type="password" id="password">
+<button onclick = "f()">提交</button>
+</body>
+</html>
